@@ -53,7 +53,7 @@ X=np.array(X)
 Y=np.array(Y)
 
 #train a SVM
-lin_clf = svm.LinearSVC(penalty='l2', loss='squared_hinge', dual=False, tol=0.0001, C=1.0, multi_class='ovr',fit_intercept=True, intercept_scaling=1, class_weight=None, verbose=0, random_state=None, max_iter=1000)
+lin_clf = svm.LinearSVC(penalty='l2', loss='squared_hinge', dual=False, tol=0.0001, C=1.0, multi_class='ovr',fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, verbose=0, max_iter=1000)
 start = t.time()
 lin_clf.fit(X, Y)
 end = t.time()
