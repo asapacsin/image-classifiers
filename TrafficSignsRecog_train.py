@@ -5,9 +5,8 @@ import numpy as np
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
-import pickle
-import time as t
-from datetime import *
+import time
+from datetime import timedelta
 
 def readTrafficSigns(rootpath):
     '''Reads traffic sign data 
@@ -16,7 +15,7 @@ def readTrafficSigns(rootpath):
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
-    N=2
+    N=15
     for c in range(0,N):
         prefix = rootpath + '/' + format(c, '05d') + '/' # subdirectory for class
         gtFile = open(prefix + 'GT-'+ format(c, '05d') + '.csv') # annotations file
@@ -28,7 +27,7 @@ def readTrafficSigns(rootpath):
             img=Image.open(prefix + row[0])  # the 1th column is the filename
             # preprocesing image, make sure the images are in the same size
             img=img.resize((32,32), Image.BICUBIC)
-            img=np.array(img)
+            img=np.array(img) #convert to gray scale
             images.append(img) 
             labels.append(row[7]) # the 8th column is the label
         gtFile.close()
@@ -39,8 +38,8 @@ trainImages, trainLabels = readTrafficSigns('TrafficSignData/Training')
 # print number of historical images
 print('number of historical data=', len(trainLabels))
 # show one sample image
-plt.imshow(trainImages[44])
-plt.show()
+#plt.imshow(trainImages[44])
+#plt.show()
 
 # design the input and output for model
 X=[]
@@ -53,16 +52,62 @@ X=np.array(X)
 Y=np.array(Y)
 
 #train a SVM
-lin_clf = svm.LinearSVC(penalty='l2', loss='squared_hinge', dual=False, tol=0.0001, C=1.0, multi_class='ovr',fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, verbose=0, max_iter=1000)
-start = t.time()
+lin_clf = svm.LinearSVC()
+start = time.time()
 lin_clf.fit(X, Y)
-end = t.time()
-score = cross_val_score(lin_clf,X,Y,cv=5)
-time = timedelta(int(end-start))
-print('model training cost '+str(time))
-pickle.dump(lin_clf,open('model/'+'svm_linear_test','wb'))
+end = time.time()
+
+
+# predict over training data 
 Ypred=lin_clf.predict(X)
+
+#cross validation using Randomforest
+#from sklearn.ensemble import RandomForestClassifier
+#accuracy_score = []
+#class_num = []
+#find the best number of classifier
+#start = time.time()
+#for i in range(2,40):
+    #print(f'currently training using {i}classifiers')
+    #clf=RandomForestClassifier(n_estimators=i)
+    #score = cross_val_score(clf,X,Y,cv=5)
+    #accuracy_score.append(score.mean())
+    #class_num.append(i)
+#end = time.time()
+#time_cost = int(end-start)
+#time_cost = timedelta(seconds = time_cost)
+#print('the training model time cost is:'+str(time_cost))
+#plt.scatter(class_num,accuracy_score)
+#f = np.polyfit(class_num,accuracy_score,2)
+#yvals = np.polyval(f,class_num)
+#plot1 = plt.plot(class_num,accuracy_score,'s',label='original values')
+#plot2 = plt.plot(class_num,yvals,'r',label='polyfit values')
+#plt.xlabel('class nums')
+#plt.ylabel('score')
+#plt.legend(loc=4)
+#plt.title('polyfitting')
+#plt.show()
+
+#train model using random forest
+#from sklearn.ensemble import RandomForestClassifier
+#clf=RandomForestClassifier(n_estimators=26)
+#start = time.time()
+#clf.fit(X,Y)
+#end = time.time()
+
+#print("Accuracy: %0.2f (+/- %0.2f)" % (score.mean(), score.std() * 2))
+time_cost = int(end-start)
+time_cost = timedelta(seconds = time_cost)
+print('the training model time cost is:'+str(time_cost))
+#Ypred=clf.predict(X)
 
 #check the accuracy
 print(accuracy_score(Y,Ypred))
-print("accuracy1:%0.2f (+/- %0.2f)"%(score.mean(),score.std()*2))
+
+
+# save model
+import pickle
+pickle.dump(lin_clf,open('model/svm_linear.sav','wb'))
+
+
+

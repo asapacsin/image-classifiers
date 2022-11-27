@@ -12,16 +12,14 @@ def readTrafficSigns(rootpath):
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
-    N=15
-    for c in range(4,6):
-        prefix = rootpath + '/' + format(c, '05d') + '/' # subdirectory for class
-        gtFile = open(prefix + 'GT-'+ format(c, '05d') + '.csv') # annotations file
+    for c in range(1,5):
+        gtFile = open(rootpath + '/test'+'.csv') # annotations file
         gtReader = csv.reader(gtFile, delimiter=';') # csv parser for annotations file
         #gtReader.next() # skip header
         next(gtReader)
         # loop over all images in current annotations file
         for row in gtReader:
-            img=Image.open(prefix + row[0])  # the 1th column is the filename
+            img=Image.open(rootpath+'/'+row[0])  # the 1th column is the filename
             # preprocesing image, make sure the images are in the same size
             img=img.resize((32,32), Image.BICUBIC)
             img=np.array(img)
@@ -31,25 +29,25 @@ def readTrafficSigns(rootpath):
     return images, labels
 
 # load the images
-trainImages, trainLabels = readTrafficSigns('TrafficSignData/Training')
+testImages, testLabels = readTrafficSigns('Test/Test')
 # print number of historical images
-print('number of historical data=', len(trainLabels))
+print('number of historical data=', len(testLabels))
 # show one sample image
-plt.imshow(trainImages[44])
-plt.show()
+#plt.imshow(testImages[0])
+#plt.show()
 
 # design the input and output for model
 X=[]
 Y=[]
-for i in range(0,len(trainLabels)):
+for i in range(0,len(testLabels)):
     # input X just the flattern image, you can design other features to represent a image
-    X.append(trainImages[i].flatten())
-    Y.append(int(trainLabels[i]))
+    X.append(testImages[i].flatten())
+    Y.append(int(testLabels[i]))
 X=np.array(X)
 Y=np.array(Y)
 
 # predict over training data 
-model = pickle.load(open('model/'+'svm_linear','rb'))
+model = pickle.load(open('model/svm_linear.sav','rb'))
 Ypred=model.predict(X)
 
 #check the accuracy
