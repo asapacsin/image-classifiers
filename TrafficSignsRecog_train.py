@@ -12,6 +12,7 @@ def readTrafficSigns(rootpath):
     '''Reads traffic sign data 
     Arguments: path to the traffic sign data, for example './TrafficSignData/Training'
     Returns:   list of images, list of corresponding labels'''
+    
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
