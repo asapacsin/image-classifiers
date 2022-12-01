@@ -12,9 +12,12 @@ img = Image.open('Test/Test/directTest.ppm')
 img = img.resize((32,32),Image.BICUBIC)
 img = np.array(img)
 img = img.flatten()
+img_arr = []
+img_arr.append(img)
+img_arr = np.array(img_arr)
 #load the model
 model = pickle.load(open('model/randomForest.sav','rb'))
 #predict the image
-Ypred=model.predict(img)
+Ypred=model.predict(img_arr)
 #output prediction
-print(Ypred)
+print(Ypred[0])
