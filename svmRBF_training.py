@@ -6,6 +6,7 @@ from sklearn import svm
 from sklearn.metrics import accuracy_score
 import pickle
 import time
+from datetime import timedelta
 
 def readTrafficSigns(rootpath):
     '''Reads traffic sign data 
@@ -14,7 +15,8 @@ def readTrafficSigns(rootpath):
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
-    for c in range(1,5):
+    n= 15
+    for c in range(1,n):
         gtFile = open(rootpath + '/test'+'.csv') # annotations file
         gtReader = csv.reader(gtFile, delimiter=';') # csv parser for annotations file
         #gtReader.next() # skip header
@@ -23,7 +25,7 @@ def readTrafficSigns(rootpath):
         for row in gtReader:
             img=Image.open(rootpath+'/'+row[0])  # the 1th column is the filename
             # preprocesing image, make sure the images are in the same size
-            img=img.resize((32,32), Image.BICUBIC)
+            img=img.resize((32,32), Image.BICUBIC).convert('L')  #convert to gray scale
             img=np.array(img)
             images.append(img) 
             labels.append(row[7]) # the 8th column is the label
@@ -31,7 +33,7 @@ def readTrafficSigns(rootpath):
     return images, labels
 
 # load the images
-testImages, testLabels = readTrafficSigns('Test/Test')
+testImages, testLabels = readTrafficSigns('TrafficSignData/Training')
 # print number of historical images
 print('number of historical data=', len(testLabels))
 # show one sample image
@@ -53,6 +55,11 @@ clf= svm.SVC(kernel='rbf',gamma='auto')
 start = time.time()
 clf.fit(X,Y)
 end = time.time()
+time_cost = end-start
+time_cost = timedelta(seconds=int(time_cost))
+print('time cost:', time_cost)
+
+#predict the result base on x
 Ypred = clf.predict(X)
 
 #check the accuracy

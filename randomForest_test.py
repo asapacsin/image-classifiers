@@ -21,7 +21,7 @@ def readTrafficSigns(rootpath):
         for row in gtReader:
             img=Image.open(rootpath+'/'+row[0])  # the 1th column is the filename
             # preprocesing image, make sure the images are in the same size
-            img=img.resize((32,32), Image.BICUBIC)
+            img=img.resize((32,32), Image.BICUBIC).convert('L')#convert to gray scale
             img=np.array(img)
             images.append(img) 
             labels.append(row[7]) # the 8th column is the label

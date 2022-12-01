@@ -15,7 +15,7 @@ def readTrafficSigns(rootpath):
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
-    N=15
+    N=3
     for c in range(0,N):
         prefix = rootpath + '/' + format(c, '05d') + '/' # subdirectory for class
         gtFile = open(prefix + 'GT-'+ format(c, '05d') + '.csv') # annotations file
@@ -26,8 +26,8 @@ def readTrafficSigns(rootpath):
         for row in gtReader:
             img=Image.open(prefix + row[0])  # the 1th column is the filename
             # preprocesing image, make sure the images are in the same size
-            img=img.resize((32,32), Image.BICUBIC)
-            img=np.array(img) #convert to gray scale
+            img=img.resize((32,32), Image.BICUBIC).convert('L')  #convert to gray scale
+            img=np.array(img) 
             images.append(img) 
             labels.append(row[7]) # the 8th column is the label
         gtFile.close()
@@ -52,7 +52,7 @@ X=np.array(X)
 Y=np.array(Y)
 
 #cross validation using svm-linear
-clf = svm.LinearSVC()
+clf = svm.LinearSVC(max_iter=5000,C=1)
 start  = time.time()
 scores = cross_val_score(clf,X,Y,cv=5)
 end = time.time()
