@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import csv
 from PIL import Image
 import numpy as np
-from sklearn import svm
+from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 import time
@@ -51,14 +51,13 @@ for i in range(0,len(trainLabels)):
 X=np.array(X)
 Y=np.array(Y)
 
-#train a random forest
-from sklearn.ensemble import RandomForestClassifier
-clf=RandomForestClassifier(n_estimators=26)
+#train a naive bayes model
+clf=GaussianNB()
 start = time.time()
 clf.fit(X,Y)
 end = time.time()
-time_cost = timedelta(seconds=int(end - start))
-print('time cost:', time_cost)
+time_cost = timedelta(seconds=int(end-start))
+print('training time cost:', time_cost)
 Ypred = clf.predict(X)
 
 #check the accuracy
@@ -67,7 +66,7 @@ print(accuracy_score(Y,Ypred))
 
 # save model
 import pickle
-pickle.dump(clf,open('model/randomForest.sav','wb'))
+pickle.dump(clf,open('model/naiveBayes.sav','wb'))
 
 
 
