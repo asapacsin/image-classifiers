@@ -15,7 +15,7 @@ def readTrafficSigns(rootpath):
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
-    N=15
+    N=5
     for c in range(0,N):
         prefix = rootpath + '/' + format(c, '05d') + '/' # subdirectory for class
         gtFile = open(prefix + 'GT-'+ format(c, '05d') + '.csv') # annotations file
