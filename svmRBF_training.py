@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import csv
 from PIL import Image
 import numpy as np
+from sklearn import svm
 from sklearn.metrics import accuracy_score
 import pickle
+import time
 
 def readTrafficSigns(rootpath):
     '''Reads traffic sign data 
@@ -46,9 +48,17 @@ for i in range(0,len(testLabels)):
 X=np.array(X)
 Y=np.array(Y)
 
-# predict over training data 
-model = pickle.load(open('model/svmRBF.sav','rb'))
-Ypred=model.predict(X)
+#train model
+clf= svm.SVC(kernel='rbf',gamma='auto')
+start = time.time()
+clf.fit(X,Y)
+end = time.time()
+Ypred = clf.predict(X)
 
 #check the accuracy
 print(accuracy_score(Y,Ypred))
+
+
+# save model
+import pickle
+pickle.dump(clf,open('model/svmRBF.sav','wb'))

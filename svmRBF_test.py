@@ -2,11 +2,8 @@ import matplotlib.pyplot as plt
 import csv
 from PIL import Image
 import numpy as np
-from sklearn import svm
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
-import time
-from datetime import timedelta
+import pickle
 
 def readTrafficSigns(rootpath):
     '''Reads traffic sign data 
@@ -15,64 +12,43 @@ def readTrafficSigns(rootpath):
     images = [] # images
     labels = [] # corresponding labels
     # loop over N classes, at most we have 42 classes
-    N=15
-    for c in range(0,N):
-        prefix = rootpath + '/' + format(c, '05d') + '/' # subdirectory for class
-        gtFile = open(prefix + 'GT-'+ format(c, '05d') + '.csv') # annotations file
+    for c in range(1,5):
+        gtFile = open(rootpath + '/test'+'.csv') # annotations file
         gtReader = csv.reader(gtFile, delimiter=';') # csv parser for annotations file
         #gtReader.next() # skip header
         next(gtReader)
         # loop over all images in current annotations file
         for row in gtReader:
-            img=Image.open(prefix + row[0])  # the 1th column is the filename
+            img=Image.open(rootpath+'/'+row[0])  # the 1th column is the filename
             # preprocesing image, make sure the images are in the same size
             img=img.resize((32,32), Image.BICUBIC)
-            img=np.array(img) #convert to gray scale
+            img=np.array(img)
             images.append(img) 
             labels.append(row[7]) # the 8th column is the label
         gtFile.close()
     return images, labels
 
 # load the images
-trainImages, trainLabels = readTrafficSigns('TrafficSignData/Training')
+testImages, testLabels = readTrafficSigns('Test/Test')
 # print number of historical images
-print('number of historical data=', len(trainLabels))
+print('number of historical data=', len(testLabels))
 # show one sample image
-#plt.imshow(trainImages[44])
+#plt.imshow(testImages[0])
 #plt.show()
 
 # design the input and output for model
 X=[]
 Y=[]
-for i in range(0,len(trainLabels)):
+for i in range(0,len(testLabels)):
     # input X just the flattern image, you can design other features to represent a image
-    X.append(trainImages[i].flatten())
-    Y.append(int(trainLabels[i]))
+    X.append(testImages[i].flatten())
+    Y.append(int(testLabels[i]))
 X=np.array(X)
 Y=np.array(Y)
 
-#from sklearn.ensemble import RandomForestClassifier
-#clf=RandomForestClassifier(n_estimators=26)
-#start = time.time()
-#clf.fit(X,Y)
-#end = time.time()
-
-#train a random forest
-#from sklearn.ensemble import RandomForestClassifier
-#clf=RandomForestClassifier(n_estimators=26)
-#start = time.time()
-#clf.fit(X,Y)
-#end = time.time()
-
-#print("Accuracy: %0.2f (+/- %0.2f)" % (score.mean(), score.std() * 2))
-#time_cost = int(end-start)
-#time_cost = timedelta(seconds = time_cost)
-#print('the time cost is:'+str(time_cost))
-#Ypred=clf.predict(X)
+# predict over training data 
+model = pickle.load(open('model/svmRBF.sav','rb'))
+Ypred=model.predict(X)
 
 #check the accuracy
-#print(accuracy_score(Y,Ypred))
-
-
-
-
+print(accuracy_score(Y,Ypred))
