@@ -1,4 +1,4 @@
-# image-classifiers
+# image-classifiers README
 ## Background
 To classify traffic sign images in ppm, three classifiers will be used
 
