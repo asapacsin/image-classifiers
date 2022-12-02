@@ -5,7 +5,7 @@ To classify traffic sign images in ppm, three classifiers will be used
 ## Requirements
 matplotlib, csv, PIL, numpy, sklearn, time, datetime, pickle
 ```sh
-$ import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import csv
 from PIL import Image
 import numpy as np
