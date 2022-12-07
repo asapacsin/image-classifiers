@@ -53,7 +53,7 @@ Y=np.array(Y)
 
 #train a random forest
 from sklearn.ensemble import RandomForestClassifier
-clf=RandomForestClassifier(n_estimators=26)
+clf=RandomForestClassifier(n_estimators=60)
 start = time.time()
 clf.fit(X,Y)
 end = time.time()
